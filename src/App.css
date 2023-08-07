@@ -1,0 +1,33 @@
+/* Стили для ячеек лабиринта */
+.cell {
+	width: 20px;
+	height: 20px;
+	/* border: 1px solid #000; */
+	text-align: center;
+	vertical-align: middle;
+	font-size: 18px;
+}
+
+/* Стили для стен в лабиринте */
+.wall {
+	background-color: #222;
+	color: #fff;
+}
+
+/* Стили для начальной позиции игрока */
+.start {
+	background-color: #4caf50;
+	color: #fff;
+}
+
+/* Стили для конечной позиции игрока */
+.finish {
+	background-color: #f44336;
+	color: #fff;
+}
+
+/* Стили для позиции игрока */
+.player {
+	background-color: #ffc107;
+	color: #000;
+}
