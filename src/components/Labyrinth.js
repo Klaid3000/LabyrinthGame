@@ -1,44 +1,30 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import GameBoard from './LabyrinthComponents/GameBoard';
+import usePlayerControls from './LabyrinthHooks/usePlayerControls';
+import Lvl1 from './LabyrinthComponents/LabyrinthMap/Lvl1';
 
 const Labyrinth = () => {
-	const [playerPosition, setPlayerPosition] = useState({ x: 0, y: 0 });
-	const [isGameFinished, setIsGameFinished] = useState(false);
-	const [keysPressed, setKeysPressed] = useState({});
-	const [labyrinthMap, setLabyrinthMap] = useState([
-		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1],
-		[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-		[1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1],
-		[1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1],
-		[1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1],
-		[1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1],
-		[1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1],
-		[1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1],
-		[1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
-		[1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1],
-		[1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1],
-		[1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1],
-		[1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1],
-		[1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-		[1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-		[1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-		[1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
-		[1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-		[1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
-		[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 3],
-		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-	]);
+	//Состояния компонента
+	const [playerPosition, setPlayerPosition] = useState({ x: 0, y: 0 }); // Состояние для позиции игрока
+	const [isGameFinished, setIsGameFinished] = useState(false); // Состояние для проверки окончания игры
+	const [labyrinthMap, setLabyrinthMap] = useState(Lvl1); // Состояние для хранения карты лабиринта
 
+	// Функция для определения начальной позиции игрока
 	const getStartPosition = () => {
+		// Проход по всей карте лабиринта для поиска точки старта
 		for (let y = 0; y < labyrinthMap.length; y++) {
 			for (let x = 0; x < labyrinthMap[y].length; x++) {
+				// Если найдена точка старта (значение 2), возвращает её позицию
 				if (labyrinthMap[y][x] === 2) {
 					return { x, y };
 				}
 			}
 		}
-		return { x: 0, y: 0 }; // Позиция по умолчанию, если точка старта не найдена
+		// Если точка старта не найдена, возвращает позицию (0, 0)
+		return { x: 0, y: 0 };
 	};
 
+	// Установка начальной позиции игрока при изменении карты лабиринта
 	useEffect(() => {
 		const startPosition = getStartPosition();
 		setPlayerPosition(startPosition);
@@ -46,19 +32,24 @@ const Labyrinth = () => {
 
 	// Функция для обработки движения игрока
 	const handleMove = (dx, dy) => {
+		// Вычисление новых координат игрока
 		const newX = playerPosition.x + dx;
 		const newY = playerPosition.y + dy;
 
+		// Проверка, является ли ход валидным (в пределах соседних клеток и без стены)
 		const isValidMove = isValidMoveWithinNeighbors(newX, newY);
 
 		if (isValidMove) {
+			// Получение значения новой позиции
 			const newPositionValue = labyrinthMap[newY][newX];
 
 			if (newPositionValue !== 1) {
-				setPlayerPosition({ x: newX, y: newY });
+				// Если новая позиция не стена
+				setPlayerPosition({ x: newX, y: newY }); // Обновление позиции игрока
 
 				if (newPositionValue === 3) {
-					setIsGameFinished(true);
+					// Если новая позиция финиш
+					setIsGameFinished(true); // Устанавливается состояние окончания игры
 					alert('Поздравляем, вы достигли финиша!');
 				}
 			}
@@ -73,8 +64,9 @@ const Labyrinth = () => {
 
 	// Функция для проверки, что новые координаты являются соседними клетками
 	const isValidMoveWithinNeighbors = (newX, newY) => {
-		const dx = Math.abs(newX - playerPosition.x);
-		const dy = Math.abs(newY - playerPosition.y);
+		const dx = Math.abs(newX - playerPosition.x); // Разница по X между текущей и новой позицией
+		const dy = Math.abs(newY - playerPosition.y); // Разница по Y между текущей и новой позицией
+		// Возвращается true, если новые координаты соседние и не равны точке старта
 		return (
 			(dx === 1 && dy === 0 && labyrinthMap[newY][newX] !== 2) ||
 			(dx === 0 && dy === 1 && labyrinthMap[newY][newX] !== 2)
@@ -84,85 +76,19 @@ const Labyrinth = () => {
 	// Функция для отображения лабиринта в виде таблицы
 	const renderLabyrinth = () => {
 		return (
-			<div>
-				<table>
-					<tbody>
-						{labyrinthMap.map((row, y) => (
-							<tr key={y}>
-								{row.map((cell, x) => (
-									<td
-										key={x}
-										className={`cell ${
-											cell === 1
-												? 'wall'
-												: cell === 2
-												? 'start'
-												: cell === 3
-												? 'finish'
-												: ''
-										} ${
-											playerPosition.x === x &&
-											playerPosition.y === y
-												? 'player'
-												: ''
-										}`}
-										onClick={() =>
-											handleMove(
-												x - playerPosition.x,
-												y - playerPosition.y,
-											)
-										}
-									>
-										{/* Здесь можно добавить другие элементы для ячеек, например, изображения или текст */}
-									</td>
-								))}
-							</tr>
-						))}
-					</tbody>
-				</table>
-				{isGameFinished && <button onClick={resetGame}>Начать заново</button>}
+			<div className="labyrinth" tabIndex="0">
+				<GameBoard
+					labyrinthMap={Lvl1}
+					playerPosition={playerPosition}
+					handleMove={handleMove}
+					isGameFinished={isGameFinished}
+					resetGame={resetGame}
+				/>
 			</div>
 		);
 	};
-	const handleKeyDown = (event) => {
-		setKeysPressed((prevKeys) => ({
-			...prevKeys,
-			[event.key]: true,
-		}));
-	};
 
-	const handleKeyUp = (event) => {
-		setKeysPressed((prevKeys) => ({
-			...prevKeys,
-			[event.key]: false,
-		}));
-	};
-
-	const handleMoveByKey = useCallback(() => {
-		if (keysPressed.ArrowUp) {
-			handleMove(0, -1);
-		} else if (keysPressed.ArrowDown) {
-			handleMove(0, 1);
-		} else if (keysPressed.ArrowLeft) {
-			handleMove(-1, 0);
-		} else if (keysPressed.ArrowRight) {
-			handleMove(1, 0);
-		}
-	}, [handleMove, keysPressed]);
-
-	useEffect(() => {
-		window.addEventListener('keydown', handleKeyDown);
-		window.addEventListener('keyup', handleKeyUp);
-
-		return () => {
-			window.removeEventListener('keydown', handleKeyDown);
-			window.removeEventListener('keyup', handleKeyUp);
-		};
-	}, []);
-
-	useEffect(() => {
-		handleMoveByKey();
-	}, [handleMoveByKey]);
+	usePlayerControls(handleMove); // Использование хука для управления движением игрока
 
 	return (
 		<div className="labyrinth" tabIndex="0">

@@ -1,4 +1,12 @@
 /* Стили для ячеек лабиринта */
+.labyrinth {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh; /* Чтобы обертка занимала как минимум высоту всего окна */
+	background-color: #f0f0f0; /* Фон для всей страницы */
+}
+
 .cell {
 	width: 20px;
 	height: 20px;
